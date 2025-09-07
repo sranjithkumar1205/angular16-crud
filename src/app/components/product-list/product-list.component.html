@@ -1,0 +1,31 @@
+<div class="product-list">
+  <h2>Products</h2>
+  <button (click)="create()">Create Product</button>
+
+  <div *ngIf="products$ | async as products">
+    <table *ngIf="products.length; else empty">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{p.id}}</td>
+          <td>{{p.name}}</td>
+          <td>{{p.price | currency}}</td>
+          <td>
+            <button (click)="edit(p.id)">Edit</button>
+            <button (click)="delete(p.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #empty>
+      <p>No products yet.</p>
+    </ng-template>
+  </div>
+</div>

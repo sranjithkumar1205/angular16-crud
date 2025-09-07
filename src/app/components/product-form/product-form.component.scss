@@ -1,0 +1,9 @@
+.product-form {
+  max-width: 640px;
+  margin: 24px auto;
+}
+
+label { display:block; margin-bottom:6px; font-weight:600 }
+input, textarea { width:100%; padding:8px; box-sizing:border-box; margin-bottom:12px }
+.actions { margin-top:12px }
+.error { color: #b00020; font-size: 12px }

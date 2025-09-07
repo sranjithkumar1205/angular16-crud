@@ -1,0 +1,31 @@
+<div class="product-form">
+  <h2>{{ isEdit ? 'Edit' : 'Create' }} Product</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div>
+      <label for="name">Name</label>
+      <input id="name" formControlName="name" />
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="error">
+        Name is required (max 100 chars).
+      </div>
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description"></textarea>
+    </div>
+
+    <div>
+      <label for="price">Price</label>
+      <input id="price" type="number" formControlName="price" />
+      <div *ngIf="form.get('price')?.invalid && form.get('price')?.touched" class="error">
+        Price must be a positive number.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Save</button>
+      <button type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+.product-list {
+  max-width: 900px;
+  margin: 24px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+button { margin-right: 8px; }
