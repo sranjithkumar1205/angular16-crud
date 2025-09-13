@@ -28,6 +28,15 @@ export class ProductListComponent implements OnInit {
 
   delete(id: number) {
     if (!confirm('Delete this product?')) return;
-    this.svc.delete(id).subscribe();
+    this.svc.delete(id).subscribe({
+      next: () => {
+        // Refresh the product list after successful deletion
+        this.products$ = this.svc.list();
+        alert('Product deleted successfully.');
+      },
+      error: (err) => {
+        alert('Failed to delete product: ' + err.message);
+      }
+    });
   }
 }

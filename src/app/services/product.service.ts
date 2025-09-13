@@ -1,50 +1,50 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Product } from '../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private products$ = new BehaviorSubject<Product[]>([
-    { id: 1, name: 'Sample A', description: 'First sample', price: 9.99 },
-    { id: 2, name: 'Sample B', description: 'Second sample', price: 19.99 }
-  ]);
+  private base = '/api/products';
 
-  private nextId = 3;
+  constructor(private http: HttpClient) { }
 
   list(): Observable<Product[]> {
-    return this.products$.asObservable();
+    return this.http.get<Product[]>(this.base).pipe(
+      catchError(() => of([]))
+    );
   }
 
   get(id: number): Observable<Product | undefined> {
-    return this.products$.pipe(
-      map(list => list.find(p => p.id === id))
+    return this.http.get<Product>(`${this.base}/${id}`).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404) return of(undefined);
+        throw err;
+      })
     );
   }
 
   create(payload: Omit<Product, 'id'>): Observable<Product> {
-    const item: Product = { id: this.nextId++, ...payload };
-    const next = [...this.products$.value, item];
-    this.products$.next(next);
-    return of(item);
+    return this.http.post<Product>(this.base, payload);
   }
 
   update(id: number, payload: Partial<Product>): Observable<Product | undefined> {
-    const list = this.products$.value.slice();
-    const idx = list.findIndex(p => p.id === id);
-    if (idx === -1) return of(undefined);
-    const updatedProduct = { ...list[idx], ...payload };
-    list[idx] = updatedProduct;
-    this.products$.next(list);
-    return of(updatedProduct);
+    return this.http.put<Product>(`${this.base}/${id}`, payload).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404) return of(undefined);
+        throw err;
+      })
+    );
   }
 
   delete(id: number): Observable<boolean> {
-    const list = this.products$.value.slice();
-    const idx = list.findIndex(p => p.id === id);
-    if (idx === -1) return of(false);
-    const filtered = list.filter(p => p.id !== id);
-    this.products$.next(filtered);
-    return of(true);
+    return this.http.delete<void>(`${this.base}/${id}`).pipe(
+      map(() => true),
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404) return of(false);
+        throw err;
+      })
+    );
   }
 }

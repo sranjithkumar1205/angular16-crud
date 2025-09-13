@@ -1,12 +1,21 @@
 <div class="product-form">
-  <h2>{{ isEdit ? 'Edit' : 'Create' }} Product</h2>
+  <h2>{{ isEdit ? "Edit" : "Create" }} Product</h2>
 
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
     <div>
       <label for="name">Name</label>
-      <input id="name" formControlName="name" />
-      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="error">
-        Name is required (max 100 chars).
+      <input
+        id="name"
+        formControlName="name"
+        [class.invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+      />
+      <div *ngIf="form.get('name')?.touched" class="error">
+        <div *ngIf="form.get('name')?.errors?.['required']">
+          Name is required.
+        </div>
+        <div *ngIf="form.get('name')?.errors?.['maxlength']">
+          Name cannot exceed 100 characters.
+        </div>
       </div>
     </div>
 
@@ -17,14 +26,26 @@
 
     <div>
       <label for="price">Price</label>
-      <input id="price" type="number" formControlName="price" />
-      <div *ngIf="form.get('price')?.invalid && form.get('price')?.touched" class="error">
-        Price must be a positive number.
+      <input
+        id="price"
+        type="number"
+        formControlName="price"
+        [class.invalid]="
+          form.get('price')?.invalid && form.get('price')?.touched
+        "
+      />
+      <div *ngIf="form.get('price')?.touched" class="error">
+        <div *ngIf="form.get('price')?.errors?.['required']">
+          Price is required.
+        </div>
+        <div *ngIf="form.get('price')?.errors?.['min']">
+          Price must be 0 or greater.
+        </div>
       </div>
     </div>
 
     <div class="actions">
-      <button type="submit">Save</button>
+      <button type="submit" [disabled]="form.invalid">Save</button>
       <button type="button" (click)="cancel()">Cancel</button>
     </div>
   </form>
