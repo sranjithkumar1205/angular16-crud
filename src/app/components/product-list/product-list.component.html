@@ -1,14 +1,41 @@
 <div class="product-list">
   <h2>Products</h2>
-  <button (click)="create()">Create Product</button>
+  <div class="actions">
+    <button (click)="create()">Create Product</button>
+  </div>
+
+  <div class="filters">
+    <div class="search">
+      <input type="text" 
+             placeholder="Search products..." 
+             #searchBox
+             (input)="search(searchBox.value)">
+    </div>
+    
+    <div class="price-range">
+      <input type="number" 
+             placeholder="Min price" 
+             #minPrice
+             (input)="updatePriceRange(+minPrice.value || undefined, +maxPrice.value || undefined)">
+      <span>to</span>
+      <input type="number" 
+             placeholder="Max price" 
+             #maxPrice
+             (input)="updatePriceRange(+minPrice.value || undefined, +maxPrice.value || undefined)">
+    </div>
+  </div>
 
   <div *ngIf="products$ | async as products">
     <table *ngIf="products.length; else empty">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
-          <th>Price</th>
+          <th (click)="sort('name')" class="sortable">
+            Name {{getSortIndicator('name')}}
+          </th>
+          <th (click)="sort('price')" class="sortable">
+            Price {{getSortIndicator('price')}}
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -25,7 +52,7 @@
       </tbody>
     </table>
     <ng-template #empty>
-      <p>No products yet.</p>
+      <p>No products found.</p>
     </ng-template>
   </div>
 </div>
